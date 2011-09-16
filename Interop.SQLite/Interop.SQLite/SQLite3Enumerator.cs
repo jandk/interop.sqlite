@@ -21,10 +21,10 @@ namespace Interop.SQLite
 		{
 			null,                                             // 0 --
 			typeof(NativeMethods).GetMethod("ColumnInt64"),   // 1 SQLite3ColumnType.Integer
-            typeof(NativeMethods).GetMethod("ColumnDouble"),  // 2 SQLite3ColumnType.Float
-            typeof(SQLite3Helper).GetMethod("ColumnTextPtr"), // 3 SQLite3ColumnType.Text
-            typeof(SQLite3Helper).GetMethod("ColumnBlobPtr"), // 4 SQLite3ColumnType.Blob
-            null,                                             // 5 SQLite3ColumnType.Null
+			typeof(NativeMethods).GetMethod("ColumnDouble"),  // 2 SQLite3ColumnType.Float
+			typeof(SQLite3Helper).GetMethod("ColumnTextPtr"), // 3 SQLite3ColumnType.Text
+			typeof(SQLite3Helper).GetMethod("ColumnBlobPtr"), // 4 SQLite3ColumnType.Blob
+			null,                                             // 5 SQLite3ColumnType.Null
 		};
 
 		private static readonly Dictionary<string, SetterMethod<T>> Setters;
@@ -90,27 +90,27 @@ namespace Interop.SQLite
 		}
 
 		internal static readonly OpCode[] CastOpCodeAffinities = new[]
-        {
-            OpCodes.Nop,     //  0 TypeCode.Empty
-            OpCodes.Nop,     //  1 TypeCode.Object
-            OpCodes.Nop,     //  2 TypeCode.DbNull
-            OpCodes.Nop,     //  3 TypeCode.Boolean
-            OpCodes.Conv_U2, //  4 TypeCode.Char
-            OpCodes.Conv_I1, //  5 TypeCode.SByte
-            OpCodes.Conv_U1, //  6 TypeCode.Byte
-            OpCodes.Conv_I2, //  7 TypeCode.Int16
-            OpCodes.Conv_U2, //  8 TypeCode.UInt16
-            OpCodes.Conv_I4, //  9 TypeCode.Int32
-            OpCodes.Conv_U4, // 10 TypeCode.UInt32
-            OpCodes.Nop,     // 11 TypeCode.Int64
-            OpCodes.Conv_U8, // 12 TypeCode.UInt64
-            OpCodes.Conv_R4, // 13 TypeCode.Single
-            OpCodes.Nop,     // 14 TypeCode.Double
-            OpCodes.Nop,     // 15 TypeCode.Decimal
-            OpCodes.Nop,     // 16 TypeCode.DateTime
-            OpCodes.Nop,     // 17 --
-            OpCodes.Nop,     // 18 TypeCode.String
-        };
+		{
+			OpCodes.Nop,     //  0 TypeCode.Empty
+			OpCodes.Nop,     //  1 TypeCode.Object
+			OpCodes.Nop,     //  2 TypeCode.DbNull
+			OpCodes.Nop,     //  3 TypeCode.Boolean
+			OpCodes.Conv_U2, //  4 TypeCode.Char
+			OpCodes.Conv_I1, //  5 TypeCode.SByte
+			OpCodes.Conv_U1, //  6 TypeCode.Byte
+			OpCodes.Conv_I2, //  7 TypeCode.Int16
+			OpCodes.Conv_U2, //  8 TypeCode.UInt16
+			OpCodes.Conv_I4, //  9 TypeCode.Int32
+			OpCodes.Conv_U4, // 10 TypeCode.UInt32
+			OpCodes.Nop,     // 11 TypeCode.Int64
+			OpCodes.Conv_U8, // 12 TypeCode.UInt64
+			OpCodes.Conv_R4, // 13 TypeCode.Single
+			OpCodes.Nop,     // 14 TypeCode.Double
+			OpCodes.Nop,     // 15 TypeCode.Decimal
+			OpCodes.Nop,     // 16 TypeCode.DateTime
+			OpCodes.Nop,     // 17 --
+			OpCodes.Nop,     // 18 TypeCode.String
+		};
 
 		private static void EmitCastOpCode(ILGenerator generator, Type type)
 		{

@@ -81,37 +81,37 @@ namespace Interop.SQLite
 		#region Type Converters
 
 		internal static readonly SQLite3ColumnType[] TypeCodeAffinities =
-        {
-            SQLite3ColumnType.Null,    //  0 TypeCode.Empty
-            SQLite3ColumnType.Blob,    //  1 TypeCode.Object
-            SQLite3ColumnType.Null,    //  2 TypeCode.DbNull
-            SQLite3ColumnType.Integer, //  3 TypeCode.Boolean
-            SQLite3ColumnType.Integer, //  4 TypeCode.Char
-            SQLite3ColumnType.Integer, //  5 TypeCode.SByte
-            SQLite3ColumnType.Integer, //  6 TypeCode.Byte
-            SQLite3ColumnType.Integer, //  7 TypeCode.Int16
-            SQLite3ColumnType.Integer, //  8 TypeCode.UInt16
-            SQLite3ColumnType.Integer, //  9 TypeCode.Int32
-            SQLite3ColumnType.Integer, // 10 TypeCode.UInt32
-            SQLite3ColumnType.Integer, // 11 TypeCode.Int64
-            SQLite3ColumnType.Integer, // 12 TypeCode.UInt64
-            SQLite3ColumnType.Float,   // 13 TypeCode.Single
-            SQLite3ColumnType.Float,   // 14 TypeCode.Double
-            SQLite3ColumnType.Float,   // 15 TypeCode.Decimal
-            SQLite3ColumnType.Integer, // 16 TypeCode.DateTime
-            SQLite3ColumnType.Null,    // 17 --
-            SQLite3ColumnType.Text,    // 18 TypeCode.String
-        };
+		{
+			SQLite3ColumnType.Null,    //  0 TypeCode.Empty
+			SQLite3ColumnType.Blob,    //  1 TypeCode.Object
+			SQLite3ColumnType.Null,    //  2 TypeCode.DbNull
+			SQLite3ColumnType.Integer, //  3 TypeCode.Boolean
+			SQLite3ColumnType.Integer, //  4 TypeCode.Char
+			SQLite3ColumnType.Integer, //  5 TypeCode.SByte
+			SQLite3ColumnType.Integer, //  6 TypeCode.Byte
+			SQLite3ColumnType.Integer, //  7 TypeCode.Int16
+			SQLite3ColumnType.Integer, //  8 TypeCode.UInt16
+			SQLite3ColumnType.Integer, //  9 TypeCode.Int32
+			SQLite3ColumnType.Integer, // 10 TypeCode.UInt32
+			SQLite3ColumnType.Integer, // 11 TypeCode.Int64
+			SQLite3ColumnType.Integer, // 12 TypeCode.UInt64
+			SQLite3ColumnType.Float,   // 13 TypeCode.Single
+			SQLite3ColumnType.Float,   // 14 TypeCode.Double
+			SQLite3ColumnType.Float,   // 15 TypeCode.Decimal
+			SQLite3ColumnType.Integer, // 16 TypeCode.DateTime
+			SQLite3ColumnType.Null,    // 17 --
+			SQLite3ColumnType.Text,    // 18 TypeCode.String
+		};
 
 		internal static readonly Type[] ColumnTypeTypes =
-        {
-            null,           // 0 --
-            typeof(long),   // 1 SQLite3ColumnType.Integer
-            typeof(double), // 2 SQLite3ColumnType.Float
-            typeof(string), // 3 SQLite3ColumnType.Text
-            typeof(byte[]), // 4 SQLite3ColumnType.Blob
-            typeof(DBNull)  // 5 SQLite3ColumnType.Null
-        };
+		{
+			null,           // 0 --
+			typeof(long),   // 1 SQLite3ColumnType.Integer
+			typeof(double), // 2 SQLite3ColumnType.Float
+			typeof(string), // 3 SQLite3ColumnType.Text
+			typeof(byte[]), // 4 SQLite3ColumnType.Blob
+			typeof(DBNull)  // 5 SQLite3ColumnType.Null
+		};
 
 		public static Func<object, T> GetConverter<T>(SQLite3ColumnType colType)
 		{
