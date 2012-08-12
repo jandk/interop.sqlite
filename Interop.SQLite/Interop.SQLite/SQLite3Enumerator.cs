@@ -185,7 +185,7 @@ namespace Interop.SQLite
 
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			SQLite3Helper.Reset(_statement);
 		}
 
 		#endregion

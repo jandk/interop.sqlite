@@ -61,7 +61,10 @@ namespace Interop.SQLite
 
 		[DllImport(DllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "sqlite3_prepare_v2")]
 		public static extern SQLite3Error PrepareV2(IntPtr db, byte[] utf8Sql, int sqlLength, out IntPtr statement, out IntPtr unusedSql);
-
+		
+		[DllImport(DllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "sqlite3_reset")]
+		public static extern SQLite3Error Reset(IntPtr statement);
+		
 		[DllImport(DllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "sqlite3_step")]
 		public static extern SQLite3Error Step(IntPtr statement);
 

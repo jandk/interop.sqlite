@@ -50,9 +50,16 @@ static class Program
 				Console.WriteLine("EXCEPTION: " + ex.Message);
 			}
 
-			using (IDisposableEnumerable<User> enumerator = db.QueryEnumerator<User>("SELECT ID, Name FROM User"))
-				foreach (User user in enumerator)
-					Console.WriteLine(user);
+			using (var enumerator = db.QueryEnumerator<User>("SELECT ID, Name FROM User"))
+			{
+				enumerator.MoveNext();
+				enumerator.MoveNext();
+				Console.WriteLine(enumerator.Current);
+				
+				enumerator.Reset();
+				while(enumerator.MoveNext())
+					Console.WriteLine(enumerator.Current);
+			}
 		}
 	}
 }
