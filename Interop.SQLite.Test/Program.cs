@@ -34,11 +34,16 @@ static class Program
 		{
 			try
 			{
-				db.Query("CREATE TABLE User ( ID INTEGER PRIMARY KEY, Name TEXT UNIQUE );");
+				using (var transaction = db.BeginTransaction())
+				{
+					db.Query("CREATE TABLE User ( ID INTEGER PRIMARY KEY, Name TEXT UNIQUE );");
 
-				db.Query("INSERT INTO User (Name) VALUES ('John')");
-				db.Query("INSERT INTO User (Name) VALUES ('Jeff')");
-				db.Query("INSERT INTO User (Name) VALUES ('Jesus')");
+					db.Query("INSERT INTO User (Name) VALUES ('John')");
+					db.Query("INSERT INTO User (Name) VALUES ('Jeff')");
+					db.Query("INSERT INTO User (Name) VALUES ('Jesus')");
+
+					transaction.Commit();
+				}
 			}
 			catch (SQLite3Exception ex)
 			{

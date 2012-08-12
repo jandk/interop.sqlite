@@ -27,7 +27,6 @@ namespace Interop.SQLite
 		{
 			// TODO: 1 - Close all prepared statements
 			// TODO: 2 - Close all blob handles
-			// TODO: 3 - Transactions...
 			SQLite3Error error = NativeMethods.Close(db);
 
 			CheckError(error);

@@ -11,6 +11,7 @@ namespace Interop.SQLite
 	{
 
 		private SQLite3Handle _db;
+		private SQLite3Transaction _transaction;
 		private List<SQLite3StatementHandle> _statementHandles;
 		// private List<SQLite3Blob> _blobs;
 		protected bool _disposed;
@@ -22,6 +23,7 @@ namespace Interop.SQLite
 			_statementHandles = new List<SQLite3StatementHandle>();
 		}
 
+		#region Query Methods
 
 		public void Query(string sql)
 		{
@@ -51,19 +53,46 @@ namespace Interop.SQLite
 			return new DisposableEnumerable<T>(new SQLite3Enumerator<T>(statement));
 		}
 
+		#endregion
+
+		public SQLite3Transaction BeginTransaction()
+		{
+			return _transaction = new SQLite3Transaction(this);
+		}
 
 		public void Close()
 		{
+			if (InTransaction)
+				_transaction.RollBack();
+
 			SQLite3Helper.Close(_db);
 		}
 
+		#region Internal Members
+
+		internal bool InTransaction
+		{
+			get
+			{
+				return _transaction != null;
+			}
+		}
+
+		#endregion
+
+		#region IDisposable Members
 
 		public void Dispose()
 		{
-			if (_db != null)
-				_db.Dispose();
+			if (_db == null)
+				return;
 
+			Close();
+			_db.Dispose();
 			_db = null;
 		}
+
+		#endregion
+
 	}
 }
