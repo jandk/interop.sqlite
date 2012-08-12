@@ -58,6 +58,7 @@
     <Compile Include="Interop.SQLite\SQLite3Statement.cs" />
     <Compile Include="Interop.SQLite\SQLite3StatementHandle.cs" />
     <Compile Include="Interop.SQLite\SQLite3TextEncoding.cs" />
+    <Compile Include="Interop.SQLite\SQLite3Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Core">
