@@ -8,6 +8,8 @@ namespace Interop.SQLite
 	{
 
 		private SQLite3 _connection;
+		// TODO: Check for a better way
+		private bool _isValid = true;
 
 		#region Constructor
 
@@ -41,6 +43,14 @@ namespace Interop.SQLite
 			get { return _connection; }
 		}
 
+		/// <summary>
+		///  A boolean indicating if the transaction is valid or not.
+		/// </summary>
+		public bool IsValid
+		{
+			get { return _isValid; }
+		}
+
 		#endregion
 
 		#region Methods
@@ -54,6 +64,7 @@ namespace Interop.SQLite
 				throw new SQLite3Exception("No transaction present");
 
 			_connection.Query("COMMIT");
+			_isValid = false;
 		}
 
 		/// <summary>
@@ -65,6 +76,7 @@ namespace Interop.SQLite
 				throw new SQLite3Exception("No transaction present");
 
 			_connection.Query("ROLLBACK");
+			_isValid = false;
 		}
 
 		#endregion
@@ -73,7 +85,8 @@ namespace Interop.SQLite
 
 		public void Dispose()
 		{
-			RollBack();
+			if (_isValid)
+				RollBack();
 		}
 
 		#endregion

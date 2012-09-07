@@ -69,7 +69,10 @@ namespace Interop.SQLite
 		public void Close()
 		{
 			if (InTransaction)
-				_transaction.RollBack();
+			{
+				_transaction.Dispose();
+				_transaction = null;
+			}
 
 			SQLite3Helper.Close(_db);
 		}
@@ -80,7 +83,9 @@ namespace Interop.SQLite
 		{
 			get
 			{
-				return _transaction != null;
+				return
+					_transaction != null &&
+					_transaction.IsValid;
 			}
 		}
 
