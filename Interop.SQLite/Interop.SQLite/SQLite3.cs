@@ -13,7 +13,6 @@ namespace Interop.SQLite
 		private SQLite3Handle _db;
 		private SQLite3Transaction _transaction;
 		private List<SQLite3StatementHandle> _statementHandles;
-		// private List<SQLite3Blob> _blobs;
 		protected bool _disposed;
 
 
