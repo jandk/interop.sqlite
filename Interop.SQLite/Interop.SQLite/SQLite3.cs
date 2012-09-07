@@ -12,14 +12,11 @@ namespace Interop.SQLite
 
 		private SQLite3Handle _db;
 		private SQLite3Transaction _transaction;
-		private List<SQLite3StatementHandle> _statementHandles;
-		protected bool _disposed;
 
 
 		public SQLite3(string filename)
 		{
 			_db = SQLite3Helper.Open(filename);
-			_statementHandles = new List<SQLite3StatementHandle>();
 		}
 
 		#region Query Methods
