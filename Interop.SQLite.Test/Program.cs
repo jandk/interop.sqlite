@@ -55,9 +55,9 @@ static class Program
 				enumerator.MoveNext();
 				enumerator.MoveNext();
 				Console.WriteLine(enumerator.Current);
-				
+
 				enumerator.Reset();
-				while(enumerator.MoveNext())
+				while (enumerator.MoveNext())
 					Console.WriteLine(enumerator.Current);
 			}
 		}
