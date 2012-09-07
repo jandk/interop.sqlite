@@ -52,9 +52,9 @@ namespace Interop.SQLite
 			SQLite3StatementHandle statement = SQLite3Helper.Prepare(_db, sql);
 			return new SQLite3Enumerator<T>(statement);
 		}
-		
+
 		public IDisposableEnumerable<T> QueryEnumerable<T>(string sql)
-			where T: new()
+			where T : new()
 		{
 			return new DisposableEnumerable<T>(QueryEnumerator<T>(sql));
 		}

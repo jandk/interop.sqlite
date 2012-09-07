@@ -69,11 +69,11 @@ namespace Interop.SQLite
 
 			CheckError(error, statement);
 		}
-		
+
 		public static void Reset(SQLite3StatementHandle statement)
 		{
 			SQLite3Error error = NativeMethods.Reset(statement);
-			
+
 			CheckError(error, statement);
 		}
 
