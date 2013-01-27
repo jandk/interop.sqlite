@@ -82,13 +82,13 @@ namespace Interop.SQLite
 
 		public static byte[] ColumnBlob(SQLite3StatementHandle statement, int index)
 		{
-			return ColumnBlobPtr((IntPtr)statement, index);
+			return ColumnBlobPtr(statement, index);
 		}
 
 		public static byte[] ColumnBlobPtr(IntPtr statement, int index)
 		{
 			int rawDataSize = NativeMethods.ColumnBytes(statement, index);
-			byte[] rawData = new byte[rawDataSize];
+			var rawData = new byte[rawDataSize];
 
 			IntPtr rawDataPtr = NativeMethods.ColumnBlob(statement, index);
 			Marshal.Copy(rawDataPtr, rawData, 0, rawDataSize);
@@ -98,7 +98,7 @@ namespace Interop.SQLite
 
 		public static string ColumnText(SQLite3StatementHandle statement, int index)
 		{
-			return ColumnTextPtr((IntPtr)statement, index);
+			return ColumnTextPtr(statement, index);
 		}
 
 		public static string ColumnTextPtr(IntPtr statement, int index)
@@ -138,15 +138,14 @@ namespace Interop.SQLite
 
 		static void CheckError(SQLite3Error error, SQLite3Handle db)
 		{
-			if (error == SQLite3Error.OK ||
+			if (error == SQLite3Error.Ok ||
 				error == SQLite3Error.Row ||
 				error == SQLite3Error.Done
 			) return;
 
 			if (db != IntPtr.Zero)
 				throw new SQLite3Exception(ErrorMessage(db));
-			else
-				throw new SQLite3Exception(error);
+			throw new SQLite3Exception(error);
 		}
 
 		#endregion

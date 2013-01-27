@@ -2,50 +2,49 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Interop.SQLite
 {
-	delegate void SetterMethod<T>(T value, IntPtr statementHandle, int columnIndex);
+	delegate void SetterMethod<in T>(T value, IntPtr statementHandle, int columnIndex);
 
 	internal class SQLite3Enumerator<T>
-		: IEnumerator<T>, IEnumerator, IDisposable
+		: IEnumerator<T>
 		where T : new()
 	{
 
 		#region Static
 
-		private static readonly MethodInfo[] ColumnGetters = new MethodInfo[]
+		private static readonly MethodInfo[] ColumnGetters = new[]
 		{
 			null,                                             // 0 --
 			typeof(NativeMethods).GetMethod("ColumnInt64"),   // 1 SQLite3ColumnType.Integer
 			typeof(NativeMethods).GetMethod("ColumnDouble"),  // 2 SQLite3ColumnType.Float
 			typeof(SQLite3Helper).GetMethod("ColumnTextPtr"), // 3 SQLite3ColumnType.Text
 			typeof(SQLite3Helper).GetMethod("ColumnBlobPtr"), // 4 SQLite3ColumnType.Blob
-			null,                                             // 5 SQLite3ColumnType.Null
+			null                                              // 5 SQLite3ColumnType.Null
 		};
 
-		private static readonly Dictionary<string, SetterMethod<T>> Setters;
+		private static readonly Dictionary<string, SetterMethod<T>> SetterMethods;
 
 		static SQLite3Enumerator()
 		{
 			// 1. Get all object properties which can be set
-			PropertyInfo[] propertyInfos = typeof(T)
-				.GetProperties()
-				.Where(prop => prop.CanWrite)
-				.ToArray();
+			var propertyInfos = new List<PropertyInfo>();
+			foreach (var property in typeof(T).GetProperties())
+				if (property.CanWrite)
+					propertyInfos.Add(property);
 
 			// 2. Create the array with the object setters, and populate it
-			Setters = new Dictionary<string, SetterMethod<T>>(StringComparer.InvariantCultureIgnoreCase);
+			SetterMethods = new Dictionary<string, SetterMethod<T>>(StringComparer.InvariantCultureIgnoreCase);
 			foreach (PropertyInfo propertyInfo in propertyInfos)
-				Setters.Add(propertyInfo.Name, GenerateSetterMethod(propertyInfo));
+				SetterMethods.Add(propertyInfo.Name, GenerateSetterMethod(propertyInfo));
 		}
 
 		private static SetterMethod<T> GenerateSetterMethod(PropertyInfo propertyInfo)
 		{
-			DynamicMethod setter = new DynamicMethod(
+			var setter = new DynamicMethod(
 				"_set" + propertyInfo.Name,
 				null,
 				new[] { typeof(T), typeof(IntPtr), typeof(int) },
@@ -109,7 +108,7 @@ namespace Interop.SQLite
 			OpCodes.Nop,     // 15 TypeCode.Decimal
 			OpCodes.Nop,     // 16 TypeCode.DateTime
 			OpCodes.Nop,     // 17 --
-			OpCodes.Nop,     // 18 TypeCode.String
+			OpCodes.Nop      // 18 TypeCode.String
 		};
 
 		private static void EmitCastOpCode(ILGenerator generator, Type type)
@@ -129,27 +128,27 @@ namespace Interop.SQLite
 
 		#endregion
 
-		protected readonly SQLite3StatementHandle _statement;
-		protected readonly IntPtr _statementHandle;
+		protected readonly SQLite3StatementHandle Statement;
+		protected readonly IntPtr StatementHandle;
 
-		protected readonly SetterMethod<T>[] _setters;
-		protected readonly int _columnCount;
+		protected readonly SetterMethod<T>[] Setters;
+		protected readonly int ColumnCount;
 
 		internal SQLite3Enumerator(SQLite3StatementHandle statement)
 		{
-			_statement = statement;
-			_statementHandle = _statement;
+			Statement = statement;
+			StatementHandle = Statement;
 
-			_columnCount = NativeMethods.ColumnCount(_statement);
-			_setters = new SetterMethod<T>[_columnCount];
+			ColumnCount = NativeMethods.ColumnCount(Statement);
+			Setters = new SetterMethod<T>[ColumnCount];
 
-			for (int i = 0; i < _columnCount; i++)
+			for (int i = 0; i < ColumnCount; i++)
 			{
-				string columnName = SQLite3Helper.ColumnName(_statement, i);
-				if (!Setters.ContainsKey(columnName))
+				string columnName = SQLite3Helper.ColumnName(Statement, i);
+				if (!SetterMethods.ContainsKey(columnName))
 					throw new SQLite3Exception("The object does not contain this property");
 
-				_setters[i] = Setters[columnName];
+				Setters[i] = SetterMethods[columnName];
 			}
 		}
 
@@ -161,9 +160,9 @@ namespace Interop.SQLite
 		{
 			get
 			{
-				T value = new T();
-				for (int i = 0; i < _columnCount; i++)
-					_setters[i](value, _statementHandle, i);
+				var value = new T();
+				for (int i = 0; i < ColumnCount; i++)
+					Setters[i](value, StatementHandle, i);
 
 				return value;
 			}
@@ -180,12 +179,12 @@ namespace Interop.SQLite
 
 		public bool MoveNext()
 		{
-			return SQLite3Helper.Step(_statement) == SQLite3Error.Row;
+			return SQLite3Helper.Step(Statement) == SQLite3Error.Row;
 		}
 
 		public void Reset()
 		{
-			SQLite3Helper.Reset(_statement);
+			SQLite3Helper.Reset(Statement);
 		}
 
 		#endregion
@@ -194,7 +193,7 @@ namespace Interop.SQLite
 
 		public void Dispose()
 		{
-			_statement.Dispose();
+			Statement.Dispose();
 		}
 
 		#endregion

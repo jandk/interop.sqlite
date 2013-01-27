@@ -6,8 +6,7 @@ namespace Interop.SQLite
 	public class SQLite3Statement
 		: IDisposable
 	{
-
-		protected bool _disposed;
+		private bool _disposed;
 		private SQLite3StatementHandle _statement;
 
 		#region IDisposable Members

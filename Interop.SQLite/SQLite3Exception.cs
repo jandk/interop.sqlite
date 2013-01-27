@@ -1,6 +1,5 @@
 
 using System;
-using System.Runtime.Serialization;
 
 namespace Interop.SQLite
 {
@@ -35,7 +34,7 @@ namespace Interop.SQLite
 			"Authorization denied",
 			"Auxiliary database format error",
 			"2nd parameter to sqlite3_bind out of range",
-			"File opened that is not a database file",
+			"File opened that is not a database file"
 		};
 
 		internal SQLite3Exception(string message)

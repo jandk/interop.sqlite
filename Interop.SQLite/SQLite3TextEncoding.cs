@@ -1,10 +1,7 @@
 
-using System;
-
 namespace Interop.SQLite
 {
 	internal enum SQLite3TextEncoding
-		: int
 	{
 		Utf8 = 1,
 		Utf16LE = 2,

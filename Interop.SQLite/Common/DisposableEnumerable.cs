@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Common
+namespace Interop.SQLite.Common
 {
 	public class DisposableEnumerable<T>
 		: IDisposableEnumerable<T>

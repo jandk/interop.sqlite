@@ -1,15 +1,13 @@
 
 using System;
 using System.Collections.Generic;
-
-using Common;
+using Interop.SQLite.Common;
 
 namespace Interop.SQLite
 {
 	public class SQLite3
 		: IDisposable
 	{
-
 		private SQLite3Handle _db;
 		private SQLite3Transaction _transaction;
 

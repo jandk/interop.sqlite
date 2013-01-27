@@ -9,7 +9,7 @@ namespace Interop.SQLite
 	{
 
 		private SQLite3StatementHandle _statement;
-		private Dictionary<string, int> _columns
+		private readonly Dictionary<string, int> _columns
 			= new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
 
 		internal SQLite3Result(SQLite3StatementHandle statement)

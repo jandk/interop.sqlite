@@ -7,7 +7,7 @@ namespace Interop.SQLite
 		: IDisposable
 	{
 
-		private SQLite3 _connection;
+		private readonly SQLite3 _connection;
 		// TODO: Check for a better way
 		private bool _isValid = true;
 

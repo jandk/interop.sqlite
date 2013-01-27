@@ -1,15 +1,12 @@
 
-using System;
-
 namespace Interop.SQLite
 {
 	internal enum SQLite3Error
-		: int
 	{
 		/// <summary>
 		///  Successful result
 		/// </summary>
-		OK = 0,
+		Ok = 0,
 
 
 		/// <summary>

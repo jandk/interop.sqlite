@@ -1,8 +1,7 @@
 
-using System;
 using System.Reflection;
 
-namespace Common
+namespace Interop.SQLite.Common
 {
 	public class Singleton<T>
 		where T : class
@@ -16,18 +15,18 @@ namespace Common
 
 		private sealed class Nested
 		{
-			private static readonly T _instance = typeof(T).InvokeMember(
-				typeof(T).Name,
-				BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic,
-				null,
-				null,
-				null
-			) as T;
-
-			internal static T Instance
+			static Nested()
 			{
-				get { return _instance; }
+				Instance = typeof(T).InvokeMember(
+					typeof(T).Name,
+					BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic,
+					null,
+					null,
+					null
+							   ) as T;
 			}
+
+			internal static T Instance { get; private set; }
 		}
 	}
 }

@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 
 namespace Interop.SQLite
 {
+	public delegate T Convert<out T>(object obj);
+
 	internal static class SQLite3Convert
 	{
 
@@ -22,7 +24,7 @@ namespace Interop.SQLite
 		public static byte[] StringToUtf8(string value)
 		{
 			int length = Encoding.UTF8.GetByteCount(value);
-			byte[] rawString = new byte[length + 1];
+			var rawString = new byte[length + 1];
 			length = Encoding.UTF8.GetBytes(value, 0, value.Length, rawString, 0);
 			rawString[length] = 0;
 
@@ -70,7 +72,7 @@ namespace Interop.SQLite
 			if (length < 0)
 				throw new ArgumentOutOfRangeException("length");
 
-			byte[] raw = new byte[length];
+			var raw = new byte[length];
 			Marshal.Copy(pointer, raw, 0, length);
 
 			return Encoding.UTF8.GetString(raw);
@@ -100,7 +102,7 @@ namespace Interop.SQLite
 			SQLite3ColumnType.Float,   // 15 TypeCode.Decimal
 			SQLite3ColumnType.Integer, // 16 TypeCode.DateTime
 			SQLite3ColumnType.Null,    // 17 --
-			SQLite3ColumnType.Text,    // 18 TypeCode.String
+			SQLite3ColumnType.Text     // 18 TypeCode.String
 		};
 
 		internal static readonly Type[] ColumnTypeTypes =
@@ -113,7 +115,7 @@ namespace Interop.SQLite
 			typeof(DBNull)  // 5 SQLite3ColumnType.Null
 		};
 
-		public static Func<object, T> GetConverter<T>(SQLite3ColumnType colType)
+		public static Convert<T> GetConverter<T>(SQLite3ColumnType colType)
 		{
 			Type retType = typeof(T);
 
@@ -122,7 +124,7 @@ namespace Interop.SQLite
 			{
 				if (retType == typeof(byte[]))
 					return obj => (T)obj;
-				else throw new ArgumentException("Invalid type for the specified column.");
+				throw new ArgumentException("Invalid type for the specified column.");
 			}
 
 			// 2: Check for nullable types.
@@ -159,7 +161,7 @@ namespace Interop.SQLite
 				// 3c. Else use the IConvertitble interface.
 				return obj => (T)Convert.ChangeType(obj, retType);
 			}
-			else throw new SQLite3Exception("Invalid type for the specified column.");
+			throw new SQLite3Exception("Invalid type for the specified column.");
 		}
 
 		#endregion

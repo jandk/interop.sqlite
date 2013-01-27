@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,9 +10,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Interop.SQLite</RootNamespace>
     <AssemblyName>Interop.SQLite</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkSubset>Client</TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,39 +32,24 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
   <ItemGroup>
     <Compile Include="Common\DisposableEnumerable.cs" />
     <Compile Include="Common\IDisposableEnumerable.cs" />
     <Compile Include="Common\Singleton.cs" />
-    <Compile Include="Interop.SQLite\NativeMethods.cs" />
-    <Compile Include="Interop.SQLite\SQLite3.cs" />
-    <Compile Include="Interop.SQLite\SQLite3ColumnType.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Convert.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Enumerator.cs" />
-    <Compile Include="Interop.SQLite\SQLite3ErrorCode.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Exception.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Handle.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Helper.cs" />
-    <Compile Include="Interop.SQLite\SQLite3OpenFlags.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Result.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Statement.cs" />
-    <Compile Include="Interop.SQLite\SQLite3StatementHandle.cs" />
-    <Compile Include="Interop.SQLite\SQLite3TextEncoding.cs" />
-    <Compile Include="Interop.SQLite\SQLite3Transaction.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="SQLite3.cs" />
+    <Compile Include="SQLite3ColumnType.cs" />
+    <Compile Include="SQLite3Convert.cs" />
+    <Compile Include="SQLite3Enumerator.cs" />
+    <Compile Include="SQLite3ErrorCode.cs" />
+    <Compile Include="SQLite3Exception.cs" />
+    <Compile Include="SQLite3Handle.cs" />
+    <Compile Include="SQLite3Helper.cs" />
+    <Compile Include="SQLite3OpenFlags.cs" />
+    <Compile Include="SQLite3Result.cs" />
+    <Compile Include="SQLite3Statement.cs" />
+    <Compile Include="SQLite3StatementHandle.cs" />
+    <Compile Include="SQLite3TextEncoding.cs" />
+    <Compile Include="SQLite3Transaction.cs" />
   </ItemGroup>
 </Project>
