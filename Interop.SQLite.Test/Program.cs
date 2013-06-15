@@ -1,66 +1,67 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Interop.SQLite.Test
 {
-	class Person
-	{
-		public string Name { get; set; }
-	}
+    internal class Person
+    {
+        public string Name { get; set; }
+    }
 
-	static class Program
-	{
-		class User
-		{
-			// ReSharper disable MemberCanBePrivate.Local
-			public int ID { get; set; }
-			public string Name { get; set; }
-			// ReSharper restore MemberCanBePrivate.Local
+    internal static class Program
+    {
+        private static void Main()
+        {
+            string filename = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "test.sqlite"
+                );
 
-			public override string ToString()
-			{
-				return String.Format("ID: {0}, Name: {1}", ID, Name);
-			}
-		}
+            using (var db = new SQLite3(filename))
+            {
+                try
+                {
+                    using (SQLite3Transaction transaction = db.BeginTransaction())
+                    {
+                        db.Query("CREATE TABLE User ( ID INTEGER PRIMARY KEY, Name TEXT UNIQUE );");
 
-		static void Main()
-		{
-			string filename = Path.Combine(
-				Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-				"test.sqlite"
-				);
+                        db.Query("INSERT INTO User (Name) VALUES ('John')");
+                        db.Query("INSERT INTO User (Name) VALUES ('Jeff')");
+                        db.Query("INSERT INTO User (Name) VALUES ('Jesus')");
 
-			using (var db = new SQLite3(filename))
-			{
-				try
-				{
-					using (var transaction = db.BeginTransaction())
-					{
-						db.Query("CREATE TABLE User ( ID INTEGER PRIMARY KEY, Name TEXT UNIQUE );");
+                        transaction.Commit();
+                    }
+                }
+                catch (SQLite3Exception ex)
+                {
+                    Console.WriteLine("EXCEPTION: " + ex.Message);
+                }
 
-						db.Query("INSERT INTO User (Name) VALUES ('John')");
-						db.Query("INSERT INTO User (Name) VALUES ('Jeff')");
-						db.Query("INSERT INTO User (Name) VALUES ('Jesus')");
+                using (IEnumerator<User> enumerator = db.QueryEnumerator<User>("SELECT ID, Name FROM User"))
+                {
+                    enumerator.MoveNext();
+                    enumerator.MoveNext();
+                    Console.WriteLine(enumerator.Current);
 
-						transaction.Commit();
-					}
-				}
-				catch (SQLite3Exception ex)
-				{
-					Console.WriteLine("EXCEPTION: " + ex.Message);
-				}
+                    enumerator.Reset();
+                    while (enumerator.MoveNext())
+                        Console.WriteLine(enumerator.Current);
+                }
+            }
+        }
 
-				using (var enumerator = db.QueryEnumerator<User>("SELECT ID, Name FROM User"))
-				{
-					enumerator.MoveNext();
-					enumerator.MoveNext();
-					Console.WriteLine(enumerator.Current);
+        private class User
+        {
+            // ReSharper disable MemberCanBePrivate.Local
+            public int ID { get; set; }
+            public string Name { get; set; }
+            // ReSharper restore MemberCanBePrivate.Local
 
-					enumerator.Reset();
-					while (enumerator.MoveNext())
-						Console.WriteLine(enumerator.Current);
-				}
-			}
-		}
-	}
+            public override string ToString()
+            {
+                return String.Format("ID: {0}, Name: {1}", ID, Name);
+            }
+        }
+    }
 }

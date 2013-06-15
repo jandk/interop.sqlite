@@ -1,154 +1,149 @@
-
 using System;
 using System.Runtime.InteropServices;
 
 namespace Interop.SQLite
 {
-	internal static class SQLite3Helper
-	{
+    internal static class SQLite3Helper
+    {
+        #region Open & Close
 
-		#region Open & Close
+        public static SQLite3Handle Open(string filename)
+        {
+            IntPtr tempHandle;
 
-		public static SQLite3Handle Open(string filename)
-		{
-			IntPtr tempHandle;
+            SQLite3Error error = NativeMethods.Open(
+                SQLite3Convert.StringToUtf8(filename),
+                out tempHandle
+                );
 
-			SQLite3Error error = NativeMethods.Open(
-				SQLite3Convert.StringToUtf8(filename),
-				out tempHandle
-			);
+            CheckError(error);
 
-			CheckError(error);
+            return tempHandle;
+        }
 
-			return tempHandle;
-		}
+        public static void Close(SQLite3Handle db)
+        {
+            // TODO: 1 - Close all prepared statements
+            // TODO: 2 - Close all blob handles
+            SQLite3Error error = NativeMethods.Close(db);
 
-		public static void Close(SQLite3Handle db)
-		{
-			// TODO: 1 - Close all prepared statements
-			// TODO: 2 - Close all blob handles
-			SQLite3Error error = NativeMethods.Close(db);
+            CheckError(error);
+        }
 
-			CheckError(error);
-		}
+        #endregion
 
-		#endregion
+        #region Querying
 
-		#region Querying
+        public static SQLite3StatementHandle Prepare(SQLite3Handle db, string sql)
+        {
+            byte[] utf8Sql = SQLite3Convert.StringToUtf8(sql);
+            IntPtr statement, unused;
 
-		public static SQLite3StatementHandle Prepare(SQLite3Handle db, string sql)
-		{
-			byte[] utf8Sql = SQLite3Convert.StringToUtf8(sql);
-			IntPtr statement, unused;
+            SQLite3Error error = NativeMethods.PrepareV2(
+                db,
+                utf8Sql,
+                utf8Sql.Length,
+                out statement,
+                out unused
+                );
 
-			SQLite3Error error = NativeMethods.PrepareV2(
-				db,
-				utf8Sql,
-				utf8Sql.Length,
-				out statement,
-				out unused
-			);
+            CheckError(error, db);
 
-			CheckError(error, db);
+            return statement;
+        }
 
-			return statement;
-		}
+        public static SQLite3Error Step(SQLite3StatementHandle statement)
+        {
+            SQLite3Error error = NativeMethods.Step(statement);
 
-		public static SQLite3Error Step(SQLite3StatementHandle statement)
-		{
-			SQLite3Error error = NativeMethods.Step(statement);
+            CheckError(error, statement);
 
-			CheckError(error, statement);
+            return error;
+        }
 
-			return error;
-		}
+        public static void Finalize(SQLite3StatementHandle statement)
+        {
+            SQLite3Error error = NativeMethods.Finalize(statement);
 
-		public static void Finalize(SQLite3StatementHandle statement)
-		{
-			SQLite3Error error = NativeMethods.Finalize(statement);
+            CheckError(error, statement);
+        }
 
-			CheckError(error, statement);
-		}
+        public static void Reset(SQLite3StatementHandle statement)
+        {
+            SQLite3Error error = NativeMethods.Reset(statement);
 
-		public static void Reset(SQLite3StatementHandle statement)
-		{
-			SQLite3Error error = NativeMethods.Reset(statement);
+            CheckError(error, statement);
+        }
 
-			CheckError(error, statement);
-		}
+        #endregion
 
-		#endregion
+        public static byte[] ColumnBlob(SQLite3StatementHandle statement, int index)
+        {
+            return ColumnBlobPtr(statement, index);
+        }
 
+        public static byte[] ColumnBlobPtr(IntPtr statement, int index)
+        {
+            int rawDataSize = NativeMethods.ColumnBytes(statement, index);
+            var rawData = new byte[rawDataSize];
 
-		public static byte[] ColumnBlob(SQLite3StatementHandle statement, int index)
-		{
-			return ColumnBlobPtr(statement, index);
-		}
+            IntPtr rawDataPtr = NativeMethods.ColumnBlob(statement, index);
+            Marshal.Copy(rawDataPtr, rawData, 0, rawDataSize);
 
-		public static byte[] ColumnBlobPtr(IntPtr statement, int index)
-		{
-			int rawDataSize = NativeMethods.ColumnBytes(statement, index);
-			var rawData = new byte[rawDataSize];
+            return rawData;
+        }
 
-			IntPtr rawDataPtr = NativeMethods.ColumnBlob(statement, index);
-			Marshal.Copy(rawDataPtr, rawData, 0, rawDataSize);
+        public static string ColumnText(SQLite3StatementHandle statement, int index)
+        {
+            return ColumnTextPtr(statement, index);
+        }
 
-			return rawData;
-		}
+        public static string ColumnTextPtr(IntPtr statement, int index)
+        {
+            int rawDataSize = NativeMethods.ColumnBytes(statement, index);
+            IntPtr rawDataPtr = NativeMethods.ColumnText(statement, index);
 
-		public static string ColumnText(SQLite3StatementHandle statement, int index)
-		{
-			return ColumnTextPtr(statement, index);
-		}
+            return SQLite3Convert.Utf8ToString(rawDataPtr, rawDataSize);
+        }
 
-		public static string ColumnTextPtr(IntPtr statement, int index)
-		{
-			int rawDataSize = NativeMethods.ColumnBytes(statement, index);
-			IntPtr rawDataPtr = NativeMethods.ColumnText(statement, index);
+        public static string ColumnName(SQLite3StatementHandle statement, int index)
+        {
+            return SQLite3Convert.Utf8ToString(
+                NativeMethods.ColumnName(statement, index)
+                );
+        }
 
-			return SQLite3Convert.Utf8ToString(rawDataPtr, rawDataSize);
-		}
+        public static string ErrorMessage(SQLite3Handle db)
+        {
+            return SQLite3Convert.Utf8ToString(
+                NativeMethods.ErrMsg(db)
+                );
+        }
 
-		public static string ColumnName(SQLite3StatementHandle statement, int index)
-		{
-			return SQLite3Convert.Utf8ToString(
-				NativeMethods.ColumnName(statement, index)
-			);
-		}
+        #region Error Checking
 
-		public static string ErrorMessage(SQLite3Handle db)
-		{
-			return SQLite3Convert.Utf8ToString(
-				NativeMethods.ErrMsg(db)
-			);
-		}
+        private static void CheckError(SQLite3Error error)
+        {
+            CheckError(error, (SQLite3Handle)IntPtr.Zero);
+        }
 
+        private static void CheckError(SQLite3Error error, SQLite3StatementHandle statement)
+        {
+            CheckError(error, (SQLite3Handle)NativeMethods.DbHandle(statement));
+        }
 
-		#region Error Checking
+        private static void CheckError(SQLite3Error error, SQLite3Handle db)
+        {
+            if (error == SQLite3Error.Ok ||
+                error == SQLite3Error.Row ||
+                error == SQLite3Error.Done
+                ) return;
 
-		static void CheckError(SQLite3Error error)
-		{
-			CheckError(error, (SQLite3Handle)IntPtr.Zero);
-		}
+            if (db != IntPtr.Zero)
+                throw new SQLite3Exception(ErrorMessage(db));
+            throw new SQLite3Exception(error);
+        }
 
-		static void CheckError(SQLite3Error error, SQLite3StatementHandle statement)
-		{
-			CheckError(error, (SQLite3Handle)NativeMethods.DbHandle(statement));
-		}
-
-		static void CheckError(SQLite3Error error, SQLite3Handle db)
-		{
-			if (error == SQLite3Error.Ok ||
-				error == SQLite3Error.Row ||
-				error == SQLite3Error.Done
-			) return;
-
-			if (db != IntPtr.Zero)
-				throw new SQLite3Exception(ErrorMessage(db));
-			throw new SQLite3Exception(error);
-		}
-
-		#endregion
-
-	}
+        #endregion
+    }
 }
