@@ -109,15 +109,13 @@ namespace Interop.SQLite
         public static string ColumnName(SQLite3StatementHandle statement, int index)
         {
             return SQLite3Convert.Utf8ToString(
-                NativeMethods.ColumnName(statement, index)
-                );
+                NativeMethods.ColumnName(statement, index));
         }
 
         public static string ErrorMessage(SQLite3Handle db)
         {
             return SQLite3Convert.Utf8ToString(
-                NativeMethods.ErrMsg(db)
-                );
+                NativeMethods.ErrMsg(db));
         }
 
         #region Error Checking
@@ -136,11 +134,12 @@ namespace Interop.SQLite
         {
             if (error == SQLite3Error.Ok ||
                 error == SQLite3Error.Row ||
-                error == SQLite3Error.Done
-                ) return;
+                error == SQLite3Error.Done)
+                return;
 
             if (db != IntPtr.Zero)
                 throw new SQLite3Exception(ErrorMessage(db));
+
             throw new SQLite3Exception(error);
         }
 
