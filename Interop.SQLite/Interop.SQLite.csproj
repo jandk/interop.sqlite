@@ -37,6 +37,7 @@
     <Compile Include="Common\DisposableEnumerable.cs" />
     <Compile Include="Common\IDisposableEnumerable.cs" />
     <Compile Include="Common\Singleton.cs" />
+    <Compile Include="ObjectHydrater.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="SQLite3.cs" />
     <Compile Include="SQLite3ColumnType.cs" />
